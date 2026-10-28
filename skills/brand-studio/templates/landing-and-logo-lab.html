@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>billsight · Insurer cut your claim? Get it back.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0B1D26;--grey:#5E6B73;--line:#E6ECEE;--bg:#FFFFFF;--soft:#F3F7F7;--lime:#3DF2B5;--plus:#3DF2B5}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Inter Tight",Inter,system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.5}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+.btn{display:inline-flex;align-items:center;gap:12px;background:var(--ink);color:#fff;font-weight:600;font-size:17px;padding:18px 28px;border-radius:999px;transition:transform .2s, background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn .arr{transition:transform .2s}.btn:hover .arr{transform:translateX(4px)}
+.btn.sm{font-size:14px;padding:11px 18px}
+.btn.lime{background:var(--lime);color:var(--ink)}
+.hl{position:relative;white-space:nowrap;z-index:0}
+.hl::before{content:"";position:absolute;left:-.06em;right:-.06em;top:.12em;bottom:.04em;background:var(--lime);z-index:-1;transform:scaleX(0);transform-origin:left;transition:transform .7s cubic-bezier(.7,0,.2,1)}
+.hl.on::before{transform:scaleX(1)}
+.label{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
+
+/* ---------- LOGO: the eye ---------- */
+.mark{overflow:visible}
+.mark .lid{fill:none;stroke:var(--ink);stroke-width:3.2;stroke-linejoin:round}
+.mark .pupil{fill:var(--ink)}
+.mark .glint{fill:var(--lime);transform-box:fill-box;transform-origin:center;transform:scale(0)}
+.mark .eye{transform-box:fill-box;transform-origin:center}
+.mark .look{transform-box:fill-box;transform-origin:center}
+.mark.inv .lid{stroke:#fff}.mark.inv .pupil{fill:#fff}
+.mark.play .eye{animation:open 2.8s cubic-bezier(.5,0,.2,1) both}
+.mark.play .look{animation:look 2.8s ease-in-out both}
+.mark.play .glint{animation:glint .5s 2.3s cubic-bezier(.3,1.8,.5,1) forwards}
+@keyframes open{
+  0%{transform:scaleY(.04)} 18%{transform:scaleY(1.06)} 24%{transform:scaleY(1)}
+  60%{transform:scaleY(1)} 65%{transform:scaleY(.04)} 71%{transform:scaleY(1)} 100%{transform:scaleY(1)}
+}
+@keyframes look{
+  0%,22%{transform:translateX(0) scale(.4)} 28%{transform:translateX(0) scale(1)}
+  38%{transform:translateX(-5px)} 50%{transform:translateX(5px)} 58%,100%{transform:translateX(0) scale(1)}
+}
+@keyframes glint{to{transform:scale(1)}}
+.logo{display:inline-flex;align-items:center;gap:10px;cursor:pointer}
+.logo svg{width:40px;height:40px}
+.wm{font-weight:800;font-size:22px;letter-spacing:-.04em}
+.wm-anim{display:inline-block;clip-path:inset(0 100% 0 0)}
+.wm-anim.play{animation:wipe .7s .5s cubic-bezier(.7,0,.2,1) forwards}
+@keyframes wipe{to{clip-path:inset(0 0 0 0)}}
+
+/* ---------- NAV ---------- */
+nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.9);backdrop-filter:blur(12px)}
+.nav-in{height:76px;display:flex;align-items:center;justify-content:space-between}
+
+/* ---------- HERO ---------- */
+.hero{padding:9vh 0 0}
+.hero h1{font-weight:900;font-size:clamp(56px,10vw,148px);line-height:.92;letter-spacing:-.055em}
+.hero h1 .ln{display:block;overflow:hidden}
+.hero h1 .ln>span{display:inline-block;transform:translateY(105%);transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.hero.on h1 .ln>span{transform:none}
+.hero.on h1 .ln:nth-child(2)>span{transition-delay:.12s}
+.hero-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-top:56px;flex-wrap:wrap}
+.hero-foot p{font-size:21px;color:var(--grey);max-width:470px;line-height:1.45}
+.found{margin-top:12vh;border-top:1px solid var(--line);padding:40px 0 64px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px}
+.found .num{font-weight:800;font-size:clamp(64px,9vw,128px);letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+.found .num small{font-size:.32em;font-weight:600;letter-spacing:-.02em;color:var(--grey);margin-left:16px}
+.found .cap{color:var(--grey);font-size:15px;max-width:300px}
+
+/* ---------- REPORT ---------- */
+section{padding:120px 0}
+.split{display:grid;grid-template-columns:1fr 1.1fr;gap:80px;align-items:center}
+h2{font-weight:800;font-size:clamp(40px,5vw,68px);letter-spacing:-.045em;line-height:1}
+.sub{font-size:19px;color:var(--grey);margin-top:22px;max-width:440px}
+.report{background:var(--soft);border-radius:28px;padding:36px}
+.r-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px}
+.r-head b{font-size:15px}.r-head span{font-size:13px;color:var(--grey)}
+.r-line{display:grid;grid-template-columns:1fr auto auto;gap:18px;align-items:center;padding:18px 0;border-top:1px solid #E4E4E0;opacity:0;transform:translateY(10px);transition:opacity .5s, transform .5s}
+.r-line.in{opacity:1;transform:none}
+.r-line .d{font-size:16px;font-weight:500}
+.r-line .d small{display:block;font-size:13px;color:var(--grey);font-weight:400;margin-top:2px}
+.r-line .a{font-weight:700;font-variant-numeric:tabular-nums;font-size:17px}
+.tag{font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap}
+.tag.y{background:var(--lime)}.tag.n{background:#fff;color:var(--grey);border:1px solid #E4E4E0}
+.r-total{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:22px;border-top:2px solid var(--ink)}
+.r-total b{font-size:30px;font-weight:800;letter-spacing:-.03em}
+
+/* ---------- STEPS ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:72px}
+.step .n{font-weight:900;font-size:96px;letter-spacing:-.06em;line-height:1;color:transparent;-webkit-text-stroke:2px var(--ink)}
+.step h3{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:20px 0 8px}
+.step p{color:var(--grey);font-size:16.5px}
+
+/* ---------- CALC ---------- */
+.calc{background:var(--ink);color:#fff;border-radius:36px;padding:72px;display:grid;grid-template-columns:1fr 1fr;gap:72px}
+.calc h2{color:#fff}
+.calc .sub{color:#A3A3A3}
+.f{margin-bottom:26px}
+.f label{display:flex;justify-content:space-between;font-size:14px;color:#A3A3A3;margin-bottom:10px}
+.f label b{color:#fff;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:#2A2A2A;border-radius:4px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--lime);cursor:pointer;border:0}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--lime);cursor:pointer;border:0}
+.out .big{font-weight:900;font-size:clamp(56px,7vw,96px);letter-spacing:-.05em;line-height:1;color:var(--lime);font-variant-numeric:tabular-nums;margin:14px 0 30px}
+.out .row{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid #2A2A2A;font-size:15px;color:#A3A3A3}
+.out .row b{color:#fff;font-variant-numeric:tabular-nums}
+.out .fine{font-size:12.5px;color:#6B6B6B;margin-top:20px;line-height:1.6}
+
+/* ---------- PRICE ---------- */
+.price{text-align:center}
+.price h2{font-size:clamp(44px,6.5vw,96px)}
+.price .sub{margin:26px auto 40px;max-width:560px}
+.price .fine{font-size:12.5px;color:var(--grey);margin-top:22px}
+
+/* ---------- BRAND / LOGO LAB ---------- */
+:root{--acc:var(--lime);--on-acc:var(--ink)}
+.brand{background:var(--ink);color:#fff;padding:96px 0 120px}
+.brand h2{color:#fff}
+.brand .sub{color:#8A8A8A}
+.stage{margin-top:48px;border-radius:32px;background:rgba(0,0,0,.28);color:#fff;min-height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;cursor:pointer;position:relative;transition:background .3s,color .3s;border:1px solid #1E1E1E}
+.stage.paper{background:#fff;color:var(--ink)}
+.stage.lime{background:var(--lime);color:var(--ink);--acc:var(--ink);--on-acc:#fff;--plus:var(--ink)}
+.stage .lk .m{width:140px;height:140px}
+.stage .lk .wm{font-size:clamp(52px,7.5vw,104px)}
+.stage .lk.typo .wm{font-size:clamp(64px,9vw,128px)}
+.stage .meta{position:absolute;left:28px;bottom:24px;font-size:13px;opacity:.6}
+.stage .meta b{display:block;font-size:15px;opacity:1}
+.stage .hint{position:absolute;right:28px;bottom:24px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.45}
+.controls{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:18px}
+.seg{display:flex;gap:6px;background:#141414;border-radius:999px;padding:5px}
+.seg button{border:0;background:transparent;color:#9A9A9A;font:600 13px "Inter Tight",sans-serif;padding:9px 16px;border-radius:999px;cursor:pointer}
+.seg button.on{background:#fff;color:var(--ink)}
+.sw{display:flex;gap:10px;align-items:center}
+.sw button{width:30px;height:30px;border-radius:50%;border:2px solid transparent;cursor:pointer;outline:2px solid transparent;outline-offset:2px}
+.sw button.on{outline-color:#fff}
+.sw .pal{width:46px;height:30px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border:1px solid rgba(255,255,255,.25)}
+.sw .pal i{width:10px;height:10px;border-radius:50%;display:block}
+.palwrap{display:flex;align-items:center;gap:14px}.palname{font-size:13px;color:#9AA7AD;min-width:120px}
+.use{background:var(--lime);color:var(--ink);border:0;font:700 14px "Inter Tight",sans-serif;padding:12px 20px;border-radius:999px;cursor:pointer}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.opt{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:22px;padding:30px 26px 22px;cursor:pointer;transition:border-color .2s, transform .2s;color:#fff}
+.opt:hover{border-color:#3A3A3A;transform:translateY(-3px)}
+.opt.sel{border-color:var(--lime)}
+.opt .lk{height:110px}
+.opt .lk .m{width:54px;height:54px}
+.opt .lk .wm{font-size:28px}
+.opt .lk.typo .wm{font-size:36px}
+.opt .cap{display:flex;gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid #1E1E1E;font-size:13px;color:#8A8A8A}
+.opt .cap b{color:#fff;display:block;font-size:14px;margin-bottom:2px}
+.opt .cap .no{font-weight:800;color:#4A4A4A;font-size:13px}
+
+.lk{display:flex;align-items:center;justify-content:center;gap:.35em}
+.lk .m{overflow:visible;fill:none;stroke:currentColor;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.lk .wm{line-height:1}
+.acc{fill:var(--acc)}.acc-s{stroke:var(--acc)}.ink{stroke:var(--on-acc)}
+.draw{stroke-dasharray:1 1}
+.pop{transform-box:fill-box;transform-origin:center}
+.play .draw{animation:dr var(--d,.6s) var(--t,0s) cubic-bezier(.6,0,.2,1) both}
+.play .pop{animation:pp .5s var(--t,0s) cubic-bezier(.3,1.6,.5,1) both}
+.play .w-wipe{animation:wipe .7s .45s cubic-bezier(.7,0,.2,1) both}
+@keyframes dr{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes pp{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes sx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* concept-specific */
+.c-eo,.c-el{transform-box:fill-box;transform-origin:center}
+.play .c-eo{animation:open 2.8s cubic-bezier(.5,0,.2,1) both}
+.play .c-el{animation:look 2.8s ease-in-out both}
+.play .c-eo2{animation:open2 1s cubic-bezier(.5,0,.2,1) both}
+.c-eo2{transform-box:fill-box;transform-origin:center}
+@keyframes open2{0%{transform:scaleY(.04)}65%{transform:scaleY(1.08)}100%{transform:scaleY(1)}}
+.c-rot{transform-origin:20px 20px}
+.play .c-rot{animation:spin 1.3s cubic-bezier(.6,0,.2,1) both}
+@keyframes spin{from{transform:rotate(-270deg)}to{transform:rotate(0)}}
+.play .c-scan{animation:scan 1.7s .5s ease-in-out both}
+@keyframes scan{0%{transform:translateY(-12px);opacity:0}10%{opacity:1}55%{transform:translateY(12px)}100%{transform:translateY(0);opacity:1}}
+.c-sw{transform-box:fill-box;transform-origin:left center}
+.play .c-sw{animation:sx .5s .45s cubic-bezier(.7,0,.2,1) both}
+.play .c-bl{animation:bl .6s cubic-bezier(.5,0,.2,1.5) both}
+.play .c-br{animation:br .6s cubic-bezier(.5,0,.2,1.5) both}
+@keyframes bl{from{transform:translateX(-8px);opacity:0}to{transform:none;opacity:1}}
+@keyframes br{from{transform:translateX(8px);opacity:0}to{transform:none;opacity:1}}
+.c-cn{transform-origin:20px 20px}
+.play .c-cn{animation:cn .5s cubic-bezier(.5,0,.2,1.4) both}
+@keyframes cn{from{transform:scale(1.3);opacity:0}to{transform:none;opacity:1}}
+.play .c-sl{animation:sl 1.7s .4s ease-in-out both}
+@keyframes sl{0%{transform:translateY(-10px);opacity:0}15%{opacity:1}50%{transform:translateY(10px)}100%{transform:translateY(0)}}
+/* typographic */
+.t-dots .i{position:relative;display:inline-block}
+.t-dots .i i{position:absolute;left:50%;top:0;width:.19em;height:.19em;margin-left:-.095em;border-radius:50%;background:currentColor}
+.t-dots .i:nth-of-type(2) i{background:var(--acc)}
+.play .t-dots .i:nth-of-type(1) i{animation:drop .6s .3s both}
+.play .t-dots .i:nth-of-type(2) i{animation:drop .6s .5s both, blink2 .35s 1.5s both}
+@keyframes drop{0%{transform:translateY(-.9em);opacity:0}60%{transform:translateY(.05em);opacity:1}80%{transform:translateY(-.03em)}100%{transform:none;opacity:1}}
+@keyframes blink2{50%{transform:scaleY(.15)}}
+.t-period .dot{display:inline-block;width:.2em;height:.2em;border-radius:50%;background:var(--acc);margin-left:.04em}
+.play .t-period .dot{animation:drop .7s .7s both, pulse .5s 1.5s 2 both}
+@keyframes pulse{50%{transform:scale(1.3)}}
+.t-under .u{position:relative}
+.t-under .u::after{content:"";position:absolute;left:0;right:0;bottom:-.1em;height:.13em;background:var(--acc);border-radius:.07em;transform-origin:left}
+.play .t-under .u::after{animation:sx .6s .55s cubic-bezier(.7,0,.2,1) both}
+.t-stack{display:inline-flex;flex-direction:column;line-height:.88}
+.t-stack .s{position:relative;z-index:0;color:var(--on-acc);padding:0 .06em;margin-left:-.06em}
+.t-stack .s::before{content:"";position:absolute;inset:.08em 0 0;background:var(--acc);z-index:-1;transform-origin:left}
+.play .t-stack .s::before{animation:sx .55s .4s cubic-bezier(.7,0,.2,1) both}
+.play .t-wipe{animation:wipe .8s .1s cubic-bezier(.7,0,.2,1) both}
+nav .lk .m,footer .lk .m{width:34px;height:34px}
+nav .lk .wm{font-size:22px}footer .lk .wm{font-size:18px}
+nav .lk.typo .wm{font-size:26px}
+.ghead{grid-column:1/-1;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#6B6B6B;margin:28px 0 4px}
+.ghead:first-child{margin-top:0}
+.story-lk{width:100%}
+.stage .story-lk{height:320px}
+.opt .story-lk{height:110px}
+nav .story-lk,footer .story-lk{height:40px;width:auto}
+.story{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.st-rcpt{position:absolute;left:0;top:0;transform-origin:0 0;opacity:0;overflow:visible;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+.st-rcpt .st-paper{stroke-width:4.5}
+.st-rcpt .st-solid{opacity:0}
+.st-rcpt .st-l{stroke-width:5.5;stroke-dasharray:1 1}
+.st-target2{position:absolute;left:50%;width:.24em;height:.24em;top:-.025em;margin-left:-.12em}
+.st-plus{position:absolute;opacity:0;fill:var(--plus);transform-origin:50% 50%;pointer-events:none}
+.st-target{position:absolute;left:50%;width:.46em;height:.46em;top:-.078em;margin-left:-.1725em}
+.st-lens{position:absolute;left:0;top:0;transform-origin:0 0;overflow:visible;fill:none;stroke:currentColor;stroke-linecap:round;pointer-events:none}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.t-dots .i.mg{margin:0 .05em 0 .02em}
+.t-dots .i svg.ie.mi{width:.46em;height:.46em;top:-.078em;margin-left:-.1725em}
+.t-dots .i svg.ie.rc{width:.22em;height:.22em;top:-.01em;margin-left:-.11em}
+.play .t-dots .i svg.ie.rc{animation:drop .6s .3s both}
+.t-tilt .i.mg{transform:rotate(-14deg);transform-origin:50% 86%;margin-left:.1em}
+.mi-hit{stroke:var(--acc)}
+.mi-scan{opacity:0}
+.play .mi-l{animation:fi .3s var(--t,.5s) both}
+.play .mi-hit{animation:fi .3s var(--t,.5s) both, hit .3s 1.95s both}
+@keyframes hit{from{stroke:currentColor}to{stroke:var(--acc)}}
+.play .mi-scan{animation:miscan 1.3s .75s ease-in-out both}
+@keyframes miscan{0%{transform:translateY(-8px);opacity:0}15%{opacity:1}55%{transform:translateY(7px)}85%{transform:translateY(0);opacity:1}100%{transform:translateY(0);opacity:0}}
+.mi.glass .mi-l,.mi.inv2 .mi-l{stroke:var(--on-acc)}
+.mi.glass .mi-hit,.mi.inv2 .mi-hit{stroke:var(--on-acc);stroke-width:4.4}
+.mi.glass .mi-scan,.mi.inv2 .mi-scan{fill:var(--on-acc)}
+.play .mi.glass .mi-hit,.play .mi.inv2 .mi-hit{animation:fi .3s var(--t,.5s) both}
+.t-hw .s .i svg.ie.mi{color:var(--fg,#fff)}
+.t-hw.low .s::before{top:.31em}
+.stage{--fg:#fff}.stage.paper,.stage.lime{--fg:#0A0A0A}.opt{--fg:#fff}nav,footer{--fg:#0A0A0A}
+.c-lin{transform-box:view-box;transform-origin:17px 20px}
+.play .c-lin{animation:lin .9s .55s cubic-bezier(.4,0,.2,1.3) both}
+@keyframes lin{from{transform:translate(-10px,-12px) scale(.6);opacity:0}to{transform:none;opacity:1}}
+.c-lhit{opacity:1}
+.play .c-lhit{animation:fi .3s 1.5s both}
+.t-dots .i svg.ld{width:.56em;height:.56em;top:-.15em;margin-left:-.238em;stroke-width:4.6}
+.t-dots .i svg.ld.big{width:1em;height:1em;top:-.36em;margin-left:-.425em;stroke-width:3.4}
+.t-two .i:nth-of-type(1) svg.ld{width:.44em;height:.44em;top:-.1em;margin-left:-.187em;stroke-width:5.2}
+.t-dots .i svg.re{width:.6em;height:.6em;top:-.21em;margin-left:-.3em;stroke-width:4}
+.t-dots .i .rd{position:absolute;left:50%;width:1.2em;margin-left:-.6em;text-align:center;top:-.34em;font-size:.46em;line-height:1;font-weight:900;color:var(--acc)}
+.play .t-dots .i .rd{animation:drop .7s .5s both}
+.play .t-scan .i svg.ld{animation:lscan 1.7s cubic-bezier(.6,0,.25,1) both}
+@keyframes lscan{0%{transform:translateX(-2.4em);opacity:0}12%{opacity:1}72%{transform:translateX(.18em)}100%{transform:none;opacity:1}}
+.c-stem{transform-box:fill-box;transform-origin:bottom}
+.play .c-stem{animation:stem .5s cubic-bezier(.5,0,.2,1.3) both}
+@keyframes stem{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.t-dots .i svg.ie{position:absolute;left:50%;top:-.13em;width:.44em;height:.44em;margin-left:-.22em;overflow:visible;fill:none;stroke:currentColor;stroke-width:4.5;stroke-linejoin:round}
+.t-lensi .i svg.ie{top:-.1em;width:.34em;height:.34em;margin-left:-.17em;stroke-width:5}
+.c-p0{opacity:0}
+.play .c-p0{animation:p0 2.8s both}
+@keyframes p0{0%,62%{opacity:1}66%,100%{opacity:0}}
+.c-p1{transform-box:fill-box;transform-origin:center}
+.play .c-p1{animation:p1 2.8s both}
+@keyframes p1{0%,66%{opacity:0;transform:scale(.4)}76%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
+.c-mag{transform-box:fill-box;transform-origin:center}
+.play .c-mag{animation:mag 1.4s var(--t,.7s) cubic-bezier(.3,1.5,.5,1) both}
+@keyframes mag{0%{opacity:0;transform:scale(.3)}45%{opacity:1;transform:scale(1.45)}100%{opacity:1;transform:scale(1)}}
+.t-hw{display:inline-flex}
+.t-hw .s{position:relative;z-index:0;color:var(--on-acc);padding:0 .05em}
+.t-hw .s::before{content:"";position:absolute;inset:.1em 0 .02em;background:var(--acc);z-index:-1;transform-origin:left}
+.t-hw .s .i svg.ie{stroke:var(--on-acc)}
+.t-hw .s .i svg.ie .c-el circle{fill:var(--on-acc)!important}
+.t-hw .s .i svg.ld text{fill:var(--on-acc)}
+.play .t-hw .s::before{animation:sx .55s .45s cubic-bezier(.7,0,.2,1) both}
+.lk .wm .i svg.ie .c-eo,.lk .wm .i svg.ie .c-el{transform-box:fill-box;transform-origin:center}
+
+footer{padding:56px 0;font-size:13px;color:var(--grey)}
+footer .row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+footer .fine{margin-top:28px;max-width:760px;line-height:1.7}
+
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s ease, transform .9s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:900px){
+  .split,.calc{grid-template-columns:1fr;gap:48px}.calc{padding:40px 28px}
+  .steps{grid-template-columns:1fr;gap:40px}.opts{grid-template-columns:1fr 1fr}
+  .v:nth-child(2){border-right:0}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<template id="eye">
+  <g class="eye">
+    <path class="lid" d="M3 20 C10 8.5 30 8.5 37 20 C30 31.5 10 31.5 3 20 Z"/>
+    <g class="look"><circle class="pupil" cx="20" cy="20" r="6.6"/><circle class="glint" cx="22.6" cy="17.4" r="2.1"/></g>
+  </g>
+</template>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" data-play href="#"><svg class="mark" viewBox="0 0 40 40"></svg><span class="wm wm-anim">billsight</span></a>
+    <a class="btn sm" href="#start">Check my claim <span class="arr">→</span></a>
+  </div>
+</nav>
+
+<header class="hero wrap" id="hero">
+  <h1><span class="ln"><span>Insurer cut</span></span><span class="ln"><span>your <span class="hl" id="hl">claim?</span></span></span><span class="ln"><span>Get it back.</span></span></h1>
+  <div class="hero-foot" id="start">
+    <p>Forward your settlement letter on WhatsApp. We check every deduction against IRDAI rules and your policy, then help you recover what was wrongly cut.</p>
+    <a class="btn lime" href="#">Check on WhatsApp <span class="arr">→</span></a>
+  </div>
+  <div class="found">
+    <div class="num"><span id="cnt">₹0</span><small>found</small></div>
+    <div class="cap">In a sample claim where the insurer deducted ₹62,450. Free to check. Results in minutes.</div>
+  </div>
+</header>
+
+<section style="background:#fff;padding-top:40px">
+  <div class="wrap split">
+    <div class="rv">
+      <div class="label">Your report</div>
+      <h2 style="margin-top:18px">Every cut, checked.<br>Every rule, cited.</h2>
+      <p class="sub">We tell you which deductions are wrong and which are fair. No guessing, no jargon.</p>
+    </div>
+    <div class="report rv" id="report">
+      <div class="r-head"><b>Claim CLM-24-118930</b><span>8 deductions checked</span></div>
+      <div class="r-line"><div class="d">Proportionate cut on pharmacy<small>Not allowed on pharmacy · RR-01</small></div><span class="tag y">Wrong</span><span class="a">₹14,200</span></div>
+      <div class="r-line"><div class="d">Proportionate cut on ICU<small>Not allowed on ICU · RR-02</small></div><span class="tag y">Wrong</span><span class="a">₹9,800</span></div>
+      <div class="r-line"><div class="d">Surgical consumables<small>Part of procedure charges · NP-02</small></div><span class="tag y">Wrong</span><span class="a">₹6,900</span></div>
+      <div class="r-line"><div class="d">"Other deductions"<small>No policy clause cited · CL-01</small></div><span class="tag y">Wrong</span><span class="a">₹5,000</span></div>
+      <div class="r-line"><div class="d">Room rent above cap + 3 more<small>Allowed by your policy</small></div><span class="tag n">Fair</span><span class="a">₹26,550</span></div>
+      <div class="r-total"><span>Likely recoverable</span><b>₹35,900</b></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:40px">
+  <div class="wrap rv">
+    <div class="label">How it works</div>
+    <div class="steps">
+      <div class="step"><div class="n">01</div><h3>Forward</h3><p>Settlement letter, bill and policy. Photos are fine.</p></div>
+      <div class="step"><div class="n">02</div><h3>We check</h3><p>AI reads every line. A former claims auditor reviews it.</p></div>
+      <div class="step"><div class="n">03</div><h3>You recover</h3><p>We draft the letter and track every deadline, up to the Ombudsman.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="calc rv">
+      <div>
+        <div class="label" style="color:#6B6B6B">Free tool</div>
+        <h2 style="margin-top:18px">Room-rent deduction, done right.</h2>
+        <p class="sub">The most misunderstood rule in Indian health insurance. Move the sliders.</p>
+        <div style="margin-top:44px">
+          <div class="f"><label>Room cap per day <b id="v-cap"></b></label><input type="range" id="cap" min="2000" max="15000" step="500" value="5000"></div>
+          <div class="f"><label>Actual room per day <b id="v-act"></b></label><input type="range" id="act" min="2000" max="25000" step="500" value="7000"></div>
+          <div class="f"><label>Days <b id="v-days"></b></label><input type="range" id="days" min="1" max="20" value="6"></div>
+          <div class="f"><label>Doctor, nursing, OT <b id="v-asc"></b></label><input type="range" id="asc" min="0" max="300000" step="500" value="31500"></div>
+          <div class="f"><label>Pharmacy, implants, tests, ICU <b id="v-exc"></b></label><input type="range" id="exc" min="0" max="400000" step="500" value="114300"></div>
+        </div>
+      </div>
+      <div class="out" style="align-self:center">
+        <div class="label" style="color:#6B6B6B">You may be owed</div>
+        <div class="big" id="o-diff">₹0</div>
+        <div class="row"><span>If cut across the whole bill</span><b id="o-wrong"></b></div>
+        <div class="row"><span>What the rule allows</span><b id="o-right"></b></div>
+        <div class="row"><span>Proportionate rate</span><b id="o-pct"></b></div>
+        <p class="fine">Illustrative. Proportionate deduction applies only to associated medical expenses, not to pharmacy, implants, diagnostics or ICU (IRDAI, March 2020). Check your policy wording.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="price">
+  <div class="wrap rv">
+    <h2>Free to check.<br>Pay only if you <span class="hl" id="hl2">get paid.</span></h2>
+    <p class="sub">A share of what we recover for you. Nothing if we don't. If a deduction is fair, we tell you that too.</p>
+    <a class="btn" href="#">Check my claim <span class="arr">→</span></a>
+    <p class="fine">Fee structure pending legal review.</p>
+  </div>
+</section>
+
+<section class="brand" id="brand">
+  <div class="wrap">
+    <div class="label" style="color:#6B6B6B">Logo lab</div>
+    <h2 style="margin-top:18px">The lens reads the bill.</h2>
+    <p class="sub">Hover any option to play it, click to load it into the stage. Change background and accent, then hit "Use on page" to see it in the nav and footer.</p>
+
+    <div class="stage" id="stage" title="Click to replay">
+      <div id="stageLk"></div>
+      <div class="meta"><b id="stName"></b><span id="stIdea"></span></div>
+      <div class="hint">Click to replay</div>
+    </div>
+    <div class="controls">
+      <div class="seg" id="bgSeg"><button class="on" data-bg="">Ink</button><button data-bg="paper">Paper</button><button data-bg="lime">Accent</button></div>
+      <div class="palwrap"><div class="sw" id="sw"></div><span id="palName" class="palname"></span></div>
+      <button class="use" id="use">Use on page →</button>
+    </div>
+
+    <div class="opts" id="opts"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="row"><a class="logo" data-play href="#"><svg class="mark" viewBox="0 0 40 40" style="width:30px;height:30px"></svg><span class="wm wm-anim" style="font-size:18px">billsight</span></a><span>Data stored in India · Originals deleted after review · Human checked</span></div>
+    <p class="fine">billsight is not an insurer, broker or law firm and does not give medical advice. We help you understand your claim and prepare documents you file in your own name. Sample figures are illustrative.</p>
+  </div>
+</footer>
+
+<script>
+// Inline the eye into every .mark (CSS can't animate inside <use>)
+const eye=document.getElementById('eye').innerHTML;
+document.querySelectorAll('svg.mark').forEach(s=>s.innerHTML=eye);
+
+function play(root){
+  const els=[...root.querySelectorAll('.mark,.wm-anim,.lk')];
+  if(root.matches&&root.matches('.lk'))els.push(root);
+  els.forEach(el=>{el.classList.remove('play');void el.getBoundingClientRect();el.classList.add('play');
+    if(el.dataset&&el.dataset.k!==undefined&&typeof LOGOS!=='undefined'){const o=LOGOS[+el.dataset.k];if(o&&o.run)o.run(el,true)}});
+}
+document.querySelectorAll('[data-play]').forEach(el=>el.addEventListener('mouseenter',()=>play(el)));
+
+// ---------- Logo lab ----------
+const W='<span class="wm w-wipe">billsight</span>';
+const S=(inner)=>`<svg class="m" viewBox="0 0 40 40">${inner}</svg>`;
+const RUPEE=(t)=>`<text class="pop acc" style="--t:${t}" x="20" y="25.4" text-anchor="middle" font-size="15" font-weight="800" stroke="none" font-family="Inter Tight, sans-serif">₹</text>`;
+const ALM='M3 20 C10 8.5 30 8.5 37 20 C30 31.5 10 31.5 3 20 Z';
+let UID=0;
+const EYE_MINI=(pupil)=>`<svg class="ie" viewBox="0 0 40 40"><g class="c-eo"><path d="${ALM}"/><g class="c-el"><circle cx="20" cy="20" r="7.5" stroke="none" style="fill:${pupil}"/></g></g></svg>`;
+const LOGOS=[
+ {g:'short',no:'01',n:'The Eye',i:'Opens, reads left and right, blinks, finds it.',h:S(`<g class="c-eo"><path d="${ALM}"/><g class="c-el"><circle cx="20" cy="20" r="6.6" fill="currentColor" stroke="none"/><circle class="pop acc" style="--t:2.3s" cx="22.6" cy="17.4" r="2.1" stroke="none"/></g></g>`)+W},
+ {g:'short',no:'02',n:'Rupee Eye',i:'The pupil is the rupee you were owed.',h:S(`<g class="c-eo2"><path d="${ALM}"/></g>${RUPEE('.75s')}`)+W},
+ {g:'short',no:'06',n:'Highlighter',i:'The marker swipe from the site, as a mark.',h:S(`<path class="draw" pathLength="1" d="M8 12.5 H31"/><rect class="c-sw acc" x="5" y="19" width="30" height="11" rx="2" stroke="none"/><path class="draw ink" pathLength="1" style="--t:.9s;--d:.4s" d="M9 24.5 H26"/>`)+W},
+ {g:'short',no:'07',n:'Lens',i:'Classic magnifier, drawn in one stroke, with a glint.',h:S(`<circle class="draw" pathLength="1" cx="17" cy="17" r="10.5" transform="rotate(-135 17 17)"/><path class="draw" pathLength="1" style="--t:.55s;--d:.3s" d="M24.8 24.8 L34 34" stroke-width="4"/><path class="draw acc-s" pathLength="1" style="--t:.9s;--d:.35s" d="M11.5 15.5 A6 6 0 0 1 15.5 11.5"/>`)+W},
+ {g:'short',no:'12',n:'Dotted i',i:'Wordmark only. The second i-dot is the eye, and it blinks.',t:1,h:`<span class="wm t-dots t-wipe">b<span class="i">ı<i></i></span>lls<span class="i">ı<i></i></span>ght</span>`},
+
+ {g:'new',no:'A',n:'Watching i',i:'01 + 12. The second i-dot is a tiny eye that opens and looks around.',t:1,h:`<span class="wm t-dots t-eyei t-wipe">b<span class="i">ı<i></i></span>lls<span class="i">ı${EYE_MINI('var(--acc)')}</span>ght</span>`},
+ {g:'new',no:'B',n:'Rupee Blink',i:'01 + 02. The eye looks, blinks, and opens with a rupee for a pupil.',h:S(`<g class="c-eo"><path d="${ALM}"/><g class="c-el"><circle class="c-p0" cx="20" cy="20" r="6.6" fill="currentColor" stroke="none"/></g><text class="c-p1 acc" x="20" y="25.4" text-anchor="middle" font-size="15" font-weight="800" stroke="none" font-family="Inter Tight, sans-serif">₹</text></g>`)+W},
+ {g:'new',no:'C',n:'Marker Eye',i:'06 + 01. A highlighter swipes through the eye, then the pupil wakes up.',h:()=>{const id='cl'+(UID++);return S(`<defs><clipPath id="${id}"><path d="${ALM}"/></clipPath></defs><g class="c-eo2"><g clip-path="url(#${id})"><rect class="c-sw acc" x="0" y="14" width="40" height="12" stroke="none"/></g><path d="${ALM}"/><g class="c-el"><circle cx="20" cy="20" r="5.4" stroke="none" style="fill:var(--on-acc)"/></g></g>`)+W}},
+ {g:'new',no:'D',n:'Rupee Lens',i:'07 + 02. The lens draws itself and magnifies the rupee.',h:S(`<circle class="draw" pathLength="1" cx="17" cy="17" r="11" transform="rotate(-135 17 17)"/><path class="draw" pathLength="1" style="--t:.5s;--d:.3s" d="M25 25 L34 34" stroke-width="4"/><text class="c-mag acc" x="17" y="22.2" text-anchor="middle" font-size="14" font-weight="800" stroke="none" font-family="Inter Tight, sans-serif">₹</text>`)+W},
+ {g:'new',no:'E',n:'Lens i',i:'07 + 12. The second i-dot is a lens ring that fills with the accent.',t:1,h:`<span class="wm t-dots t-lensi t-wipe">b<span class="i">ı<i></i></span>lls<span class="i">ı<svg class="ie" viewBox="0 0 40 40"><circle class="draw" pathLength="1" style="--t:.5s" cx="20" cy="20" r="13" transform="rotate(-90 20 20)"/><circle class="pop acc" style="--t:1s" cx="20" cy="20" r="6.5" stroke="none"/></svg></span>ght</span>`},
+ {g:'new',no:'F',n:'Highlight & Watch',i:'06 + 12 + 01. sight is highlighted and its i-dot watches you.',t:1,h:`<span class="wm t-hw"><span class="t-wipe" style="display:inline-block">bill</span><span class="s t-dots">s<span class="i">ı${EYE_MINI('var(--acc)')}</span>ght</span></span>`}
+];
+const MI=(o={})=>{const id='mc'+(UID++);return `<svg class="ie mi${o.glass?' glass':''}${o.inv?' inv2':''}" viewBox="0 0 40 40"><defs><clipPath id="${id}"><circle cx="15" cy="15" r="6.2"/></clipPath></defs>${o.glass?'<circle class="pop acc" style="--t:.35s" cx="15" cy="15" r="8.6" stroke="none"/>':''}<g stroke-width="2" stroke-linecap="round"><path class="mi-l" style="--t:.45s" d="M11 12.6 H19"/><path class="mi-l mi-hit" style="--t:.55s" d="M11 17.2 H17.4"/></g><g clip-path="url(#${id})"><rect class="mi-scan acc" x="6" y="15.8" width="18" height="2.8" stroke="none"/></g><circle class="draw" pathLength="1" cx="15" cy="15" r="8.75" stroke-width="5.5" transform="rotate(45 15 15)"/><path class="draw" pathLength="1" style="--t:.4s;--d:.25s" d="M22 22 L28.6 28.6" stroke-width="6.4"/></svg>`};
+const RC=`<svg class="ie rc" viewBox="0 0 40 40"><path d="M8 4 H32 V36 L28 32.5 L24 36 L20 32.5 L16 36 L12 32.5 L8 36 Z" fill="currentColor" stroke="none"/></svg>`;
+const WM=(d1,d2,cls='')=>`<span class="wm t-dots ${cls}">b<span class="i${d1.includes('mi')?' mg':''}">ı${d1}</span>lls<span class="i${d2.includes('mi')?' mg':''}">ı${d2}</span>ght</span>`;
+LOGOS.unshift(
+ {g:'scan',no:'S1',n:'Magnifier i',i:'The i-dot is a magnifier reading two bill lines. The scan stops on the wrong one.',t:1,h:()=>WM('<i></i>',MI(),'t-wipe')},
+ {g:'scan',no:'S2',n:'Bill → Sight',i:'First i-dot is a tiny bill, second is the lens reading it.',t:1,h:()=>WM(RC,MI(),'t-wipe')},
+ {g:'scan',no:'S3',n:'Accent Glass i',i:'Solid accent lens with dark bill lines. Reads best at small sizes.',t:1,h:()=>WM('<i></i>',MI({glass:1}),'t-wipe')},
+ {g:'scan',no:'S4',n:'Lens on Bill',i:'Standalone mark. A lens over a receipt; the line under the glass turns accent.',h:()=>{const id='lc'+(UID++);return S(`<defs><clipPath id="${id}"><circle cx="17" cy="20" r="5.9"/></clipPath></defs><path class="draw" pathLength="1" style="--d:.7s" d="M3 4 H23 V33 L19.7 30.6 L16.3 33 L13 30.6 L9.7 33 L6.3 30.6 L3 33 Z" stroke-width="2.8"/><g stroke-width="2.6"><path class="mi-l" style="--t:.4s" d="M7.5 11.5 H18.5"/><path class="mi-l" style="--t:.5s" d="M7.5 20 H18.5"/><path class="mi-l" style="--t:.6s" d="M7.5 26 H15"/></g><g class="c-lin"><g clip-path="url(#${id})"><path class="c-lhit" d="M7.5 20 H18.5" stroke-width="3.6" style="stroke:var(--acc)"/></g><circle cx="17" cy="20" r="7.4" stroke-width="3"/><path d="M22.4 25.4 L30 33" stroke-width="4.2"/></g>`)+W}},
+ {g:'scan',no:'S5',n:'Bill in Lens',i:'Standalone mark. The receipt sits inside the glass; a scan line finds the wrong line.',h:()=>{const id='bc'+(UID++);return S(`<defs><clipPath id="${id}"><circle cx="17" cy="17" r="10.6"/></clipPath></defs><circle class="draw" pathLength="1" cx="17" cy="17" r="12.4" stroke-width="3.4" transform="rotate(45 17 17)"/><path class="draw" pathLength="1" style="--t:.45s;--d:.25s" d="M26 26 L34 34" stroke-width="4.4"/><path class="mi-l" style="--t:.5s" d="M11.5 9.5 H22.5 V24.5 L20.3 23 L18.1 24.5 L15.9 23 L13.7 24.5 L11.5 23 Z" stroke-width="2"/><g stroke-width="2"><path class="mi-l" style="--t:.6s" d="M14.3 13.5 H19.7"/><path class="mi-l mi-hit" style="--t:.65s" d="M14.3 17 H19.7"/><path class="mi-l" style="--t:.7s" d="M14.3 20.5 H18"/></g><g clip-path="url(#${id})"><rect class="mi-scan acc" x="5" y="15.7" width="24" height="2.6" stroke="none"/></g>`)+W}}
+);
+const STORY_H=()=>`<div class="story">
+<svg class="st-rcpt" viewBox="0 0 100 130"><path class="st-solid" d="M12 6 H88 V118 L80.4 111.5 L72.8 118 L65.2 111.5 L57.6 118 L50 111.5 L42.4 118 L34.8 111.5 L27.2 118 L19.6 111.5 L12 118 Z" fill="currentColor" stroke="none"/><path class="st-paper" d="M12 6 H88 V118 L80.4 111.5 L72.8 118 L65.2 111.5 L57.6 118 L50 111.5 L42.4 118 L34.8 111.5 L27.2 118 L19.6 111.5 L12 118 Z"/><g class="st-lines"><path class="st-l" pathLength="1" d="M26 32 H74"/><path class="st-l" pathLength="1" d="M26 50 H66"/><path class="st-l st-bad" pathLength="1" d="M26 68 H72"/><path class="st-l" pathLength="1" d="M26 86 H58"/></g></svg>
+<span class="wm t-dots st-word">b<span class="i">ı<span class="st-target2"></span></span>lls<span class="i mg">ı<span class="st-target"></span></span>ght</span>
+<svg class="st-plus" viewBox="0 0 40 40"><rect x="14.5" y="3" width="11" height="34" rx="3"/><rect x="3" y="14.5" width="34" height="11" rx="3"/></svg>
+<svg class="st-lens" viewBox="0 0 40 40"><g class="st-inner" stroke-width="2" stroke-linecap="round"><path d="M11 12.6 H19"/><path d="M11 17.2 H17.4" style="stroke:var(--acc)"/></g><circle cx="15" cy="15" r="8.75" stroke-width="5.5"/><path d="M22 22 L28.6 28.6" stroke-width="6.4"/></svg>
+</div>`;
+function storyRun(lkEl,animate){
+  const box=lkEl.querySelector('.story');if(!box)return;
+  (box._a||[]).forEach(a=>a.cancel());box._a=[];
+  const q=c=>box.querySelector(c);
+  const R=box.getBoundingClientRect(),rc=q('.st-rcpt'),lens=q('.st-lens'),word=q('.st-word'),
+        inner=q('.st-inner'),bad=q('.st-bad'),lines=q('.st-lines'),solid=q('.st-solid'),paper=q('.st-paper'),plus=q('.st-plus');
+  // receipt size and centre
+  const H=R.height*.88,Wd=H*100/130,k=H/130;rc.style.width=Wd+'px';rc.style.height=H+'px';
+  const C0=[R.width/2,R.height/2];
+  const rpos=(c,s)=>`translate(${c[0]-Wd*s/2}px,${c[1]-H*s/2}px) scale(${s})`;
+  const RP=(ux,uy)=>[C0[0]-Wd/2+ux*k,C0[1]-H/2+uy*k];
+  // lens size
+  const S=Math.max(24,H*.42);lens.style.width=lens.style.height=S+'px';
+  const lpos=(c,s)=>`translate(${c[0]-.375*S*s}px,${c[1]-.375*S*s}px) scale(${s})`;
+  // targets measured from the real letters
+  const t=q('.st-target').getBoundingClientRect(),tc=[t.left-R.left+.375*t.width,t.top-R.top+.375*t.height],sL=t.width/S;
+  const t2=q('.st-target2').getBoundingClientRect(),t2c=[t2.left-R.left+t2.width/2,t2.top-R.top+t2.height/2],sR=t2.height/H;
+  plus.style.width=plus.style.height=t2.width+'px';plus.style.left=(t2.left-R.left)+'px';plus.style.top=(t2.top-R.top)+'px';
+  const finalState=()=>{lens.style.transform=lpos(tc,sL);lens.style.opacity=1;inner.style.opacity=1;word.style.opacity=1;
+    rc.style.opacity=0;plus.style.opacity=1;plus.style.transform='none'};
+  if(!animate||R.height<70||matchMedia('(prefers-reduced-motion: reduce)').matches){finalState();return}
+  const T=4400,o=ms=>ms/T,A=(el,kf)=>{const a=el.animate(kf,{duration:T,fill:'both'});box._a.push(a);return a};
+  const L=[RP(50,32),RP(50,50),RP(50,68),RP(50,86)],start=RP(95,0);
+  const midL=[(L[2][0]+tc[0])/2,Math.min(L[2][1],tc[1])-R.height*.3];
+  const midR=[(C0[0]+t2c[0])/2,Math.min(C0[1],t2c[1])-R.height*.22];
+  // receipt: appear, hold while scanned, then fly to the first i and become a solid dot
+  A(rc,[{transform:rpos(C0,.85),opacity:0,offset:0,easing:'ease-out'},{transform:rpos(C0,1),opacity:1,offset:o(450)},
+        {transform:rpos(C0,1),opacity:1,offset:o(2350),easing:'ease-in'},
+        {transform:rpos(midR,(1+sR)/2.2),opacity:1,offset:o(2900),easing:'ease-in'},
+        {transform:rpos(t2c,sR*1.1),opacity:1,offset:o(3150)},
+        {transform:rpos(t2c,sR*.5),opacity:0,offset:o(3300)},{transform:rpos(t2c,sR*.5),opacity:0,offset:1}]);
+  // the bill turns into a health plus as it lands on the first i
+  A(plus,[{transform:'scale(0) rotate(-90deg)',opacity:0,offset:0},{transform:'scale(0) rotate(-90deg)',opacity:0,offset:o(3120),easing:'cubic-bezier(.3,0,.3,1)'},
+          {transform:'scale(1.28) rotate(10deg)',opacity:1,offset:o(3360),easing:'ease-in-out'},{transform:'scale(.9) rotate(0deg)',opacity:1,offset:o(3520),easing:'ease-in-out'},
+          {transform:'scale(1.04)',opacity:1,offset:o(3660)},{transform:'none',opacity:1,offset:o(3780)},{transform:'none',opacity:1,offset:1}]);
+  A(solid,[{opacity:0,offset:0},{opacity:0,offset:o(2950)},{opacity:1,offset:o(3200)},{opacity:1,offset:1}]);
+  A(paper,[{opacity:1,offset:0},{opacity:1,offset:o(2950)},{opacity:0,offset:o(3200)},{opacity:0,offset:1}]);
+  A(lines,[{opacity:1,offset:0},{opacity:1,offset:o(2600)},{opacity:0,offset:o(2950)},{opacity:0,offset:1}]);
+  box.querySelectorAll('.st-l').forEach((l,i)=>A(l,[{strokeDashoffset:1,offset:0},{strokeDashoffset:1,offset:o(300+i*90)},{strokeDashoffset:0,offset:o(620+i*90)},{strokeDashoffset:0,offset:1}]));
+  A(bad,[{stroke:'currentColor',offset:0},{stroke:'currentColor',offset:o(2050)},{stroke:'var(--acc)',offset:o(2150)},{stroke:'var(--acc)',offset:1}]);
+  // lens: scan, stop on the wrong line, then fly to the second i a beat after the bill lands
+  A(lens,[
+    {transform:lpos(start,1.15),opacity:0,offset:0},
+    {transform:lpos(start,1.15),opacity:0,offset:o(600)},
+    {transform:lpos(L[0],1),opacity:1,offset:o(900),easing:'ease-in-out'},
+    {transform:lpos(L[1],1),opacity:1,offset:o(1250),easing:'ease-in-out'},
+    {transform:lpos(L[2],1),opacity:1,offset:o(1550),easing:'ease-in-out'},
+    {transform:lpos(L[3],1),opacity:1,offset:o(1800),easing:'ease-in-out'},
+    {transform:lpos(L[2],1),opacity:1,offset:o(2050),easing:'ease-in'},
+    {transform:lpos(L[2],1.08),opacity:1,offset:o(2450),easing:'ease-in'},
+    {transform:lpos(midL,(1+sL)/2),opacity:1,offset:o(3150),easing:'ease-in'},
+    {transform:lpos(tc,sL*1.18),opacity:1,offset:o(3620),easing:'ease-out'},
+    {transform:lpos(tc,sL*.9),opacity:1,offset:o(3800),easing:'ease-in-out'},
+    {transform:lpos(tc,sL*1.04),opacity:1,offset:o(3980)},
+    {transform:lpos(tc,sL),opacity:1,offset:o(4120)},
+    {transform:lpos(tc,sL),opacity:1,offset:1}]);
+  A(inner,[{opacity:0,offset:0},{opacity:0,offset:o(3650)},{opacity:1,offset:o(3900)},{opacity:1,offset:1}]);
+  A(word,[{opacity:0,transform:'translateY(.12em)',offset:0},{opacity:0,transform:'translateY(.12em)',offset:o(2550),easing:'cubic-bezier(.2,.8,.2,1)'},{opacity:1,transform:'none',offset:o(3000)},{opacity:1,transform:'none',offset:1}]);
+}
+LOGOS.unshift({g:'scan',no:'S0',n:'Scan & Land',i:'The lens scans a bill and stops on the wrong line. The bill becomes a health plus on the first i; the lens lands on the second.',t:1,story:1,h:STORY_H,run:storyRun});
+let _rw=innerWidth,_rt;addEventListener('resize',()=>{if(innerWidth===_rw)return;_rw=innerWidth;clearTimeout(_rt);_rt=setTimeout(()=>document.querySelectorAll('.lk[data-k]').forEach(el=>{const o=LOGOS[+el.dataset.k],b=el.querySelector('.story');if(o&&o.run&&!(b&&b._a&&b._a.some(a=>a.playState==='running')))o.run(el,false)}),150)});
+const PALETTES=[
+ {n:'Mint & Midnight',ink:'#0B1D26',acc:'#3DF2B5',plus:'#3DF2B5'},
+ {n:'Coral Care',ink:'#16182E',acc:'#FF8A65',plus:'#5EE2C1'},
+ {n:'Saffron & Green',ink:'#1C1510',acc:'#FFB224',plus:'#2BD48F'},
+ {n:'Electric Trust',ink:'#0A1B3D',acc:'#5B9BFF',plus:'#4FE3C1'},
+ {n:'Violet Calm',ink:'#18122C',acc:'#B99BFF',plus:'#7DE3C8'},
+ {n:'Lime Ink',ink:'#0A0A0A',acc:'#D4FF3A',plus:'#D4FF3A'}
+];
+const opts=document.getElementById('opts'),stage=document.getElementById('stage'),stageLk=document.getElementById('stageLk');
+let cur=0;
+const lk=(o)=>`<div class="lk${o.t?' typo':''}${o.story?' story-lk':''}" data-k="${LOGOS.indexOf(o)}">${typeof o.h==='function'?o.h():o.h}</div>`;
+const GH={scan:'Bill scan with a lens',short:'Your shortlist',new:'Other mixes of your picks'};let lastG='';
+const optEls=[];
+LOGOS.forEach((o,k)=>{
+  if(o.g!==lastG){const h=document.createElement('div');h.className='ghead';h.textContent=GH[o.g];opts.appendChild(h);lastG=o.g}
+  const d=document.createElement('div');d.className='opt'+(k===0?' sel':'');optEls.push(d);
+  d.innerHTML=lk(o)+`<div class="cap"><span class="no">${o.no}</span><div><b>${o.n}</b>${o.i}</div></div>`;
+  d.addEventListener('mouseenter',()=>play(d));
+  d.addEventListener('click',()=>select(k,true));
+  opts.appendChild(d);
+  if(o.run)requestAnimationFrame(()=>o.run(d.querySelector('.lk'),false));
+});
+function select(k,scroll){
+  cur=k;optEls.forEach((c,j)=>c.classList.toggle('sel',j===k));
+  stageLk.innerHTML=lk(LOGOS[k]);
+  if(LOGOS[k].run)LOGOS[k].run(stageLk.querySelector('.lk'),false);
+  document.getElementById('stName').textContent=LOGOS[k].no+' · '+LOGOS[k].n;
+  document.getElementById('stIdea').textContent=LOGOS[k].i;
+  if(scroll)stage.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>play(stage),scroll?350:0);
+}
+select(0);
+stage.addEventListener('click',()=>play(stage));
+document.querySelectorAll('#bgSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#bgSeg button').forEach(x=>x.classList.toggle('on',x===b));
+  stage.classList.remove('paper','lime');if(b.dataset.bg)stage.classList.add(b.dataset.bg);play(stage);
+}));
+const sw=document.getElementById('sw');
+function setPal(pl){const r=document.documentElement.style;r.setProperty('--ink',pl.ink);r.setProperty('--lime',pl.acc);r.setProperty('--plus',pl.plus);document.getElementById('palName').textContent=pl.n}
+PALETTES.forEach((pl,k)=>{const b=document.createElement('button');b.className='pal'+(k?'':' on');b.title=pl.n;
+  b.style.background=pl.ink;b.innerHTML=`<i style="background:${pl.acc}"></i><i style="background:${pl.plus}"></i>`;
+  b.addEventListener('click',()=>{[...sw.children].forEach(x=>x.classList.toggle('on',x===b));setPal(pl);play(stage)});sw.appendChild(b)});
+setPal(PALETTES[0]);
+document.getElementById('use').addEventListener('click',()=>{
+  document.querySelectorAll('nav .logo, footer .logo').forEach(a=>{a.innerHTML=lk(LOGOS[cur]);const l=a.querySelector('.lk');if(LOGOS[cur].run)LOGOS[cur].run(l,false);else play(a)});
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+const inr=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+function countUp(el,to,ms=1600){const t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/ms);el.textContent=inr(to*(1-Math.pow(1-p,4)));if(p<1)requestAnimationFrame(f)})(t0)}
+
+// Hero entrance
+addEventListener('load',()=>{
+  play(document.querySelector('nav'));
+  document.getElementById('hero').classList.add('on');
+  setTimeout(()=>document.getElementById('hl').classList.add('on'),900);
+  setTimeout(()=>countUp(document.getElementById('cnt'),35900),1300);
+});
+
+// Scroll reveals
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  const t=e.target;
+  if(t.classList.contains('rv'))t.classList.add('in');
+  if(t.id==='report')t.querySelectorAll('.r-line').forEach((l,i)=>setTimeout(()=>l.classList.add('in'),300+i*140));
+  if(t.querySelector&&t.querySelector('#hl2'))setTimeout(()=>document.getElementById('hl2').classList.add('on'),500);
+  if(t.id==='brand'){play(stage);t.querySelectorAll('.opt').forEach((v,i)=>setTimeout(()=>play(v),600+i*180))}
+  if(t.tagName==='FOOTER')play(t);
+  io.unobserve(t);
+}),{threshold:.25});
+document.querySelectorAll('.rv,#report,#brand,footer').forEach(el=>io.observe(el));
+
+// Calculator
+const ids=['cap','act','days','asc','exc'],el=Object.fromEntries(ids.map(i=>[i,document.getElementById(i)]));
+function calc(){
+  const v=Object.fromEntries(ids.map(i=>[i,+el[i].value]));
+  ids.forEach(i=>document.getElementById('v-'+i).textContent=i==='days'?v[i]:inr(v[i]));
+  const pct=v.act>v.cap?1-v.cap/v.act:0;
+  const right=Math.max(0,v.act-v.cap)*v.days+pct*v.asc;
+  const wrong=pct*(v.act*v.days+v.asc+v.exc);
+  document.getElementById('o-right').textContent=inr(right);
+  document.getElementById('o-wrong').textContent=inr(wrong);
+  document.getElementById('o-pct').textContent=(pct*100).toFixed(1)+'%';
+  document.getElementById('o-diff').textContent=inr(Math.max(0,wrong-right));
+}
+ids.forEach(i=>el[i].addEventListener('input',calc));calc();
+</script>
+</body>
+</html>

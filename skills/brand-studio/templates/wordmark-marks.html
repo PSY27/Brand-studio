@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>billsight · bill + lens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0E1F17;--plus:#5DD39E;--lens:#5DD39E;--gold:#F4D35E;--fg:#FFFFFF}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Space Grotesk",system-ui,sans-serif;background:var(--ink);color:#fff;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:36px 32px 80px}
+.label{font-size:12.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+h1{font-weight:700;font-size:clamp(34px,4.4vw,54px);letter-spacing:-.035em;line-height:1.02;margin:12px 0 10px}
+.sub{color:rgba(255,255,255,.62);font-size:16px;max-width:700px;line-height:1.5}
+.ctrl{display:flex;gap:10px;align-items:center;margin-top:22px;font-size:13px;color:rgba(255,255,255,.55);flex-wrap:wrap}
+.chip{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:#fff;border-radius:999px;padding:7px 14px;cursor:pointer;font:500 13px "Space Grotesk";display:inline-flex;gap:6px;align-items:center}
+.chip.on{border-color:var(--plus);background:rgba(255,255,255,.1)}
+.chip i{width:11px;height:11px;border-radius:50%}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:30px}
+.card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:22px 20px 18px;cursor:pointer;transition:border-color .2s,transform .2s}
+.card:hover{border-color:rgba(255,255,255,.3);transform:translateY(-3px)}
+.row{display:flex;gap:16px;align-items:center}
+.box{position:relative;overflow:hidden;background:var(--ink);display:flex;align-items:center;justify-content:center;outline:1px solid rgba(255,255,255,.08);flex:none}
+.box.wide{width:100%;height:180px;border-radius:18px;flex:1}
+.box.sq{width:170px;height:170px;border-radius:38px;box-shadow:0 16px 32px rgba(0,0,0,.35)}
+.card h3{font-size:16px;font-weight:700;margin-top:16px}
+.card p{font-size:13px;color:rgba(255,255,255,.58);margin-top:5px;line-height:1.45}
+.no{color:rgba(255,255,255,.35);margin-right:6px}
+.g{font-family:"Space Grotesk";font-weight:700;line-height:1;color:var(--fg);letter-spacing:-.03em;white-space:nowrap;position:relative}
+.g .c{display:inline-block;position:relative}
+.pl,.ln{position:absolute;overflow:visible;pointer-events:none}
+.pl{fill:var(--plus)}
+.ln{fill:none;stroke:var(--lens);stroke-linecap:round}
+.ln .mg{fill:var(--plus);stroke:none}
+.go .g{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+.go .pl{animation:sp .7s .35s cubic-bezier(.3,1.5,.5,1) both}
+.go .ln{animation:drop .7s .65s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(14%)}to{opacity:1;transform:none}}
+@keyframes sp{from{transform:translateY(-60%) scale(.3) rotate(-180deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes drop{from{transform:translateX(30%) scale(.6);opacity:0}to{transform:none;opacity:1}}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="label">billsight · identifier · "bill" + the lens</div>
+  <h1>The word bill, a plus for its dot, the lens for sight.</h1>
+  <p class="sub">Read it as "bill" + sight. The word "bill" in Space Grotesk with the health plus as the i-dot, and the lens standing in for "sight". Each card shows the wide lockup and the square app icon. At favicon size use the lens alone. Hover to play.</p>
+  <div class="ctrl">Lens colour
+    <button class="chip on" data-c="#5DD39E"><i style="background:#5DD39E"></i>Green</button>
+    <button class="chip" data-c="#F4D35E"><i style="background:#F4D35E"></i>Gold</button>
+    <button class="chip" data-c="#FFFFFF"><i style="background:#fff"></i>White</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+const F={n:'Space Grotesk',w:700};
+const CV=document.createElement('canvas');CV.width=520;CV.height=440;const X=CV.getContext('2d',{willReadFrequently:true});
+const FS=200,OX=100,OY=330,em=v=>v/FS;
+function raster(ch){X.clearRect(0,0,520,440);X.font=`${F.w} ${FS}px "${F.n}"`;X.fillText(ch,OX,OY);const d=X.getImageData(0,0,520,440).data;
+  const ink=(x,y)=>d[(y*520+x)*4+3]>110;const runs=y=>{const r=[];let s=-1;for(let x=0;x<520;x++){const v=ink(x,y);if(v&&s<0)s=x;if(!v&&s>=0){r.push([s,x-1]);s=-1}}if(s>=0)r.push([s,519]);return r};
+  let top=0;while(top<440&&!runs(top).length)top++;return {runs,top}}
+let M;
+function metrics(){const r=raster('i');let y=r.top;while(r.runs(y).length)y++;const db=y-1;const s=raster('ı');const mid=Math.round((s.top+OY)/2),sr=s.runs(mid)[0];
+  const l=raster('l');X.font=`${F.w} ${FS}px "${F.n}"`;const m=X.measureText('b'),A=m.fontBoundingBoxAscent/FS,D=m.fontBoundingBoxDescent/FS;
+  return {cx:em((sr[0]+sr[1])/2-OX),cy:em(OY-(r.top+db)/2),h:em(db-r.top+1),xh:em(OY-s.top),asc:em(OY-l.top),base:(1-(A+D))/2+A}}
+const PLUS=s=>`<svg class="pl" viewBox="0 0 40 40" style="width:${s}px;height:${s}px"><rect x="14" y="2" width="12" height="36" rx="3.6"/><rect x="2" y="14" width="36" height="12" rx="3.6"/></svg>`;
+// lens svg: ring centre at (15,15) of a 40 box; dir 1 = handle down-right, -1 = up-right
+const LENS=(s,up=false,inner='')=>`<svg class="ln" viewBox="0 0 40 40" style="width:${s}px;height:${s}px">${inner}<circle cx="15" cy="15" r="8.75" stroke-width="5.5"/><path d="${up?'M22 8 L28.6 1.4':'M22 22 L28.6 28.6'}" stroke-width="6.4"/></svg>`;
+const ringToBox=d=>d*40/23; // outer ring diameter -> svg box size
+// thin lens: ring centre (15,15), outer radius 13.5
+const LENS_T=(s,up=false)=>`<svg class="ln" viewBox="0 0 40 40" style="width:${s}px;height:${s}px"><circle cx="15" cy="15" r="12" stroke-width="3"/><path d="${up?'M25 5 L30.5 -.5':'M25 25 L32 32'}" stroke-width="4.2"/></svg>`;
+const ringToBoxT=d=>d*40/27;
+function put(host,html,x,y,ax=.5,ay=.5){host.insertAdjacentHTML('beforeend',html);const el=host.lastElementChild;const s=parseFloat(el.style.width);el.style.left=(x-s*ax)+'px';el.style.top=(y-s*ay)+'px';return el}
+function rel(el,host){const a=el.getBoundingClientRect(),b=host.getBoundingClientRect();return {x:a.left-b.left,y:a.top-b.top,w:a.width,h:a.height}}
+const WORD=`<span class="g"><span class="c">b</span><span class="c i">ı</span><span class="c">ll</span><span class="c end" style="width:var(--gap,0);height:1em;vertical-align:top"></span></span>`;
+function plusDot(host,g,fs){const r=rel(g.querySelector('.i'),host);put(host,PLUS(M.h*fs*1.12),r.x+M.cx*fs,r.y+(M.base-M.cy)*fs)}
+const D=[
+ {n:'bill + lens',d:'The lens sits right after the word at x-height, so it reads "bill" then "sight". The most direct.',gap:.62,
+  p:(h,g,fs)=>{plusDot(h,g,fs);const e=rel(g.querySelector('.end'),h);const dR=M.xh*fs*1.0,B=ringToBox(dR);put(h,LENS(B),e.x+fs*.1+dR/2,e.y+(M.base-M.xh/2)*fs,.375,.375)}},
+ {n:'bill + tall lens',d:'The lens is as tall as the l, like a letter in the word. Bolder; the handle drops below the baseline.',gap:.86,
+  p:(h,g,fs)=>{plusDot(h,g,fs);const e=rel(g.querySelector('.end'),h);const dR=M.asc*fs*.86,B=ringToBox(dR);put(h,LENS(B),e.x+fs*.1+dR/2,e.y+(M.base-M.asc+dR/2/fs*1)*fs,.375,.375)}},
+ {n:'bill, then a small lens',d:'A small lens on the baseline like a full stop. Quiet and confident: "bill. looked at."',gap:.36,
+  p:(h,g,fs)=>{plusDot(h,g,fs);const e=rel(g.querySelector('.end'),h);const dR=M.h*fs*1.6,B=ringToBox(dR);put(h,LENS(B),e.x+fs*.06+dR/2,e.y+M.base*fs-dR/2-fs*.02,.375,.375)}},
+ {n:'Lens over the plus',d:'A thin lens frames the i-dot, and the plus inside looks bigger, magnified. Health is what billsight looks at.',gap:.2,
+  p:(h,g,fs)=>{const r=rel(g.querySelector('.i'),h);const cx=r.x+M.cx*fs,cy=r.y+(M.base-M.cy)*fs-fs*.06;put(h,PLUS(M.h*fs*1.7),cx,cy);const dR=M.h*fs*3.2;put(h,LENS_T(ringToBoxT(dR),true),cx,cy,.375,.375)}},
+ {n:'bill inside the lens',d:'The whole word sits in the glass: billsight is looking at your bill.',gap:0,scale:.62,
+  p:(h,g,fs)=>{plusDot(h,g,fs);const w=rel(g,h);const dR=Math.max(w.w*1.5,M.asc*fs*2.1);put(h,LENS_T(ringToBoxT(dR)),w.x+w.w/2,w.y+(M.base-M.asc*.45)*fs,.375,.375)}},
+ {n:'Stacked: bill over lens',d:'"bill" on top, the lens below it. Works as a tall avatar or sticker.',gap:0,stack:1,scale:.8,
+  p:(h,g,fs)=>{plusDot(h,g,fs);const w=rel(g,h);const dR=M.xh*fs*1.25,B=ringToBox(dR);put(h,LENS(B),w.x+w.w/2-dR*.1,w.y+M.base*fs+fs*.12+dR/2,.375,.375)}}
+];
+function go(el){el.classList.remove('go');void el.getBoundingClientRect();el.classList.add('go')}
+function render(box,d,fs){box.innerHTML=WORD;const g=box.querySelector('.g');g.style.fontSize=fs+'px';g.style.setProperty('--gap',d.gap+'em');
+  if(d.stack)g.style.transform=`translateY(-${fs*.42}px)`;
+  if(d.n==='bill inside the lens')g.style.transform=`translate(-${fs*.18}px,-${fs*.18}px)`;
+  d.p(box,g,fs)}
+async function main(){
+  await document.fonts.load(`${F.w} 200px "${F.n}"`,'bıil');await document.fonts.ready;M=metrics();
+  const grid=document.getElementById('grid');
+  D.forEach((d,i)=>{const c=document.createElement('div');c.className='card';
+    c.innerHTML=`<div class="row"><div class="box wide"></div><div class="box sq"></div></div><h3><span class="no">W${i+1}</span>${d.n}</h3><p>${d.d}</p>`;
+    grid.appendChild(c);const wide=c.querySelector('.wide'),sq=c.querySelector('.sq');
+    render(wide,d,104*(d.scale||1));render(sq,d,58*(d.scale||1));
+    c.onmouseenter=()=>{go(wide);go(sq)};setTimeout(()=>{go(wide);go(sq)},300+i*200)});
+}
+document.querySelectorAll('.chip[data-c]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.chip[data-c]').forEach(x=>x.classList.toggle('on',x===b));document.documentElement.style.setProperty('--lens',b.dataset.c);document.querySelectorAll('.box').forEach(go)});
+main();
+</script>
+</body>
+</html>
